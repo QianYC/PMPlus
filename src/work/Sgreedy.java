@@ -38,6 +38,7 @@ public class Sgreedy extends Schedule{
 
     @Override
     public void ProcessSchedule(Task[] arrivedTask, int[] cpuOperate) {
+        
         if(arrivedTask != null && arrivedTask.length != 0){
             for(Task task : arrivedTask){
                 recordTask(task, getTimeTick());
@@ -91,7 +92,7 @@ public class Sgreedy extends Schedule{
     private void recordTask(Task task, int arrivedTime){
         int newIndex = getNewTaskBeginIndex();
         writeInteger(newIndex+PCB_tidBeginner, task.tid);
-        writeInteger(newIndex+PCB_arrivedTimeBeginner, arrivedTime);
+        writeInteger(newIndex + PCB_arrivedTimeBeginner, arrivedTime);
         writeInteger(newIndex+PCB_cpuTimeBeginner, task.cpuTime);
         writeInteger(newIndex+PCB_leftTimeBeginner, task.cpuTime);
         writeInteger(newIndex+PCB_rsLengthBeginner, task.resource.length);
@@ -209,11 +210,12 @@ public class Sgreedy extends Schedule{
     /**
      * 执行主函数 用于debug
      * @param args
-     * @throws IOException
+     * @throws IOException                                                       
      */
     public static void main(String[] args) throws IOException {
         int cpuNumber = 2;
-        BottomMonitor bottomMonitor = new BottomMonitor("src/testFile/textSample.txt",cpuNumber);
+        String fileName="src/testFile/tests/rand_8.csv";
+        BottomMonitor bottomMonitor = new BottomMonitor(fileName, cpuNumber);
         BottomService bottomService = new BottomService(bottomMonitor);
         Schedule schedule =  new Sgreedy();
         schedule.setBottomService(bottomService);
@@ -222,6 +224,12 @@ public class Sgreedy extends Schedule{
             Task[] tasks = bottomMonitor.getTaskArrived();
             int[] cpuOperate = new int[cpuNumber];
             schedule.ProcessSchedule(tasks,cpuOperate);
+
+//            for (int j : cpuOperate) {
+//                System.out.print(j + " ");
+//            }
+//            System.out.println();
+            
             try {
                 bottomService.runCpu(cpuOperate);
             } catch (Exception e) {
